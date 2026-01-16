@@ -1,0 +1,27 @@
+# --- Obsidian 관련 ---
+# 기기마다 다른 화면 레이아웃 및 열린 파일 정보 (충돌 방지 1순위)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+
+# 플러그인별 캐시 및 내부 데이터
+.obsidian/plugins/obsidian-git/data.json
+.obsidian/plugins/*/data.json
+# 만약 플러그인 설정까지 모두 무시하고 싶다면 아래 주석을 해제하세요
+# .obsidian/plugins/
+
+# 커뮤니티 플러그인 로그 및 캐시
+.obsidian/log
+
+# --- 시스템 파일 ---
+.DS_Store
+Thumbs.db
+*.tmp
+
+# --- (선택사항) 대용량 파일 ---
+# 이미지나 PDF가 너무 많아 깃허브 용량이 걱정된다면 제외하세요
+# *.pdf
+# *.mp4
+# *.png
+# *.jpg
+# *.jpeg
