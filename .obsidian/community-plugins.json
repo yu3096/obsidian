@@ -15,5 +15,7 @@
   "obsidian-outliner",
   "highlightr-plugin",
   "code-styler",
-  "obsidian-git"
+  "obsidian-git",
+  "obsidian-minimal-settings",
+  "better-export-pdf"
 ]

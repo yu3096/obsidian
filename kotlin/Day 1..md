@@ -103,3 +103,5 @@ public class Order {
 - data class 사용
 - isExpensive()는 expression 스타일
 - var 사용 금지
+
+[[Day 1.1. 문법공부]]

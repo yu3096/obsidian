@@ -190,3 +190,5 @@ users.stream()
 ```
 
 kotlin쪽이 노이즈도 적고, 흐름이 눈에 바로 들어옴
+
+[[Day 3.3. Sequence vs List (지연 평가 vs 즉시 평가)]]

@@ -101,3 +101,5 @@ fun User.saveToDatabase(){...}
 > 2. Top-level 함수의 문법적 확장이다.
 > 3. 읽기 좋은 코드를 만드는 게 목적이다.
 > 4. 상태/부작용 로직에는 쓰지 않는다.
+
+[[Day 1.3 Scope Function]]

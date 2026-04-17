@@ -175,3 +175,5 @@ user.also {log(it)}
 ##### Java 개발자로써 이렇게 봐보기
 `this` -> 이 객체 안에서 작업한다.
 `it` -> 이 객체를 잠깐 전달받았다.
+
+[[Day 2.1. Null Safety - Kotlin이 Java를 버린 지점]]

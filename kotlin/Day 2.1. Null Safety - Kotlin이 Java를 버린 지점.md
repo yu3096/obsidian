@@ -124,3 +124,4 @@ val name = javaUser.name
 val name: String? = javaUser.name
 ```
 
+[[Day 2.2. Sealed class - null 대신 의미 있는 결과]]

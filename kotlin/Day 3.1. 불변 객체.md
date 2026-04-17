@@ -43,7 +43,7 @@ val paidOrder = order.copy(
 **불변 + 변경의 양립**
 
 ### Java Builder 패턴과의 비교 (why?)
-```java title:java(Builder Pattern)
+```java title:"java(Builder Pattern)"
 Order newOrder = Order.builder()
                       .id(order.getId())
                       .status(PAID)
@@ -140,3 +140,5 @@ fun pay(order: Order): Order =
         paidAt = LocalDateTime.now()
     )
 ```
+
+[[Day 3.2. Kotlin Collection API의 사고 전환]]

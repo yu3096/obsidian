@@ -1,1 +1,7 @@
-{}
+{
+  "enabledCssSnippets": [
+    "callout_folder",
+    "wide-mode"
+  ],
+  "baseFontSize": 14
+}

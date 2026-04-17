@@ -117,3 +117,5 @@ package com.example.demo
 fun hello() = "Hello Kotlin" //Java에서는 불가능한 구조
 ```
 Top-level 함수 가능
+
+[[Day 1.2. 코틀린의 진짜 무기(확장 함수)]]
