@@ -660,10 +660,86 @@ flowchart LR
 > 두 종류의 위치 임베딩은 LLM이 토큰 사이의 순서와 관계를 이해하는 능력을 보강하여 정확하고 맥락을 고려한 예측을 만드는데 목적이 있으며,
 > 어떤 것을 선택 할 지는 애플리케이션과 처리하려는 데이터의 성질에 따라 달라지는 경우가 많음.
 
+```python
+vocab_size = 50257
+output_dim = 256
+token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+
+max_length = 4
+dataloader = create_dataloader_v1(
+    raw_text, batch_size=8, max_length=4, stride=4, shuffle=False
+)
+
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+print("토큰 ID:\n", inputs)
+print("입력 크기:\n", inputs.shape)
+```
+```
+토큰 ID:
+ tensor([[   40,   473,  1846,  2744],
+        [ 3463,  7762,   480,   285],
+        [22464,  4856,   264, 12136],
+        [35201,   313,  4636,   264],
+        [ 1695, 12637,  3403,   313],
+        [  708,   433,   574,   912],
+        [ 2294, 13051,   311,   757],
+        [  311,  6865,   430,    11]])
+입력 크기:
+ torch.Size([8, 4])
+ 
+###
+토큰 ID 텐서의 차원이 8 X 4임.
+배치에 4개의 토큰을 가진 텍스트 샘플 8개가 들어있다는 의미.
+```
+
+```python
+token_embeddings = token_embedding_layer(inputs)
+print(token_embeddings.shape) # torch.Size([8, 4, 256]) 각 토큰ID가 256차원 벡터로 임베딩되었다는 것을 의미
+```
+
+> [!info] 책의 내용
+> GPT 모델의 절대 임베딩 방법에는 token_embedding_layer와 동일한 임베딩 차원을 가지는 또 다른 임베딩 층을 만들면 됨
+> `pos_embeddings`의 입력은 일반적으로 플레이스홀더(placeholder) 벡터인 torch.arange(context_length)임
+> 이 벡터는 숫자 0, 1, ... 최대길이 -1까지의 시퀀스를 담고있으며, `context_length`는 LLM이 지원하는 입력 크기를 나타내는 변수.
+> 입력 텍스트는 지원하는 문맥 길이보다 길 수 있으며 이 경우 텍스트를 잘라야 함.
+
+```python
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+pos_embeddings = pos_embedding_layer(torch.arange(context_length))
+print(pos_embeddings.shape) # torch.Size([4, 256])
+
+input_embeddings = token_embeddings + pos_embeddings
+print(input_embeddings.shape) # torch.Size([8, 4, 256])
+```
+
+> [!question] Q1. 뭔소리야?
+> 1. **왜 동일한 차원의 또 다른 층이 필요한가?**
+> 트랜스포머 기반의 LLM은 모든 단어를 병렬로 처리하기 때문에 모델은 어떤 단어가 먼저 왔는지에 대한 순서 정보를 잃어버림
+> 	- **Token Embedding**: 단어의 사전적 의미를 벡터화(예: 사과 -> `[0.1, -0.2, ...]`)
+> 	- **Position Embedding**: 단어가 놓인 절대적 위치를 벡터화(예: 0번째 칸 -> `[-0.5, 0.1, ...]`)
+> 	  
+> 	이 두 정보를 합치려면 행렬 연산(덧셈)이 가능해야 하므로 **두 임베딩 층의 열(Column) 개수(차원)**는 반드시 일치해야 함.
+> 	
+> 2. torch.arange(context_length)의 역할
+> 단순한 인덱스 제너레이터
+> 	- **역할**: LLM이 한 번에 처리할 수 있는 최대 칸수(context_length)만큼 정수 시퀀스 생성
+> 	- **예시**: 모델이 최대 256개의 단어를 처리한다면 `[0, 1, 2, ...255]`라는 배열을 만듬
+> 	- **플레이스홀더(Placeholder)인 이유**: 값 자체가 데이터인게 아닌 **몇 번째 위치의 벡터를 꺼내올 것인가**를 결정하는 PK 역할만 함
+> 	
+>   3. **문맥 길이(context_length)와 텍스트 커팅(Truncation)
+> 	  모델은 설계될 때 부터 **수용 가능한 메모리(Context Window)**가 정해져있음.
+> 	  - **제한의 이유**: 트랜스포머의 핵심인 어텐션 연산량은 입력 길의의 제곱에 비례.(무한정 받을 수 없어서 특정 크기로 제한)
+> 	  - **자르기**: 입력 받은 토큰의 개수가 `context_length` 보다 크면 모델은 뒷부분을 잘라버림
+> 		  - **Logic**: `input_ids = input_ids[:context_length]`
+> 	  - **채우기(Padding)**: 반대로 입력이 너무 짧으면 남는 공간을 의미 없는 토큰(PAD)으로 채워서 규격을 맞춤
+>   
+>  즉, 단어의 의미만 남긴 벡터(x)에 나는 몇번째 자리에 있다는 식별정보를 더해줌으로써 문장 내에서 선후 관계를 수학적으로 계산할 수 있게 만듬
+
 
 
 ---
-
 ## 🧐 최종 갈무리 (Synthesis)
 *챕터를 마친 후, 전체 내용을 관통하는 나만의 결론을 내립니다.*
 
